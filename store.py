@@ -4,9 +4,11 @@ class Product:
         self.price = price
         self.initial_quantity = quantity
         self.quantity = quantity
+        self.discount = False
+        self.discount_price = None
 
     def __str__(self):
-        return f"{self.name} - ${self.price} (Quantity: {self.quantity})"
+        return f"{self.name} - ${self.price if not self.discount else self.discount_price} (Quantity: {self.quantity})"
 
 class Inventory:
     def __init__(self):
@@ -36,6 +38,21 @@ class Inventory:
             self.products[product_name].quantity = self.products[product_name].initial_quantity
         else:
             raise ValueError("Product not available or insufficient quantity") 
+        
+    # applying discount to a product
+    def apply_discount(self, product_name, discount):
+        if product_name in self.products:
+            self.products[product_name].discount = True
+            self.products[product_name].discount_price = self.products[product_name].price - (self.products[product_name].price * discount)
+        else:
+            raise ValueError("Product not available or insufficient quantity")
+        
+    # removing discount of a product
+    def remove_discount(self, product_name):
+        if product_name in self.products:
+            self.products[product_name].discount = False
+        else:
+            raise ValueError("Product not available or insufficient quantity")
 
 class SalesReport:
     def __init__(self, inventory):
@@ -88,3 +105,11 @@ inventory.list_products()
 
 report = SalesReport(inventory)
 report.generate_report()
+
+# applying 10% discount to bananas
+inventory.apply_discount("Banana", 0.1)
+inventory.list_products()
+
+# remove 10% discount from bananas
+inventory.remove_discount("Banana")
+inventory.list_products()
