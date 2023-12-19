@@ -2,6 +2,7 @@ class Product:
     def __init__(self, name, price, quantity):
         self.name = name
         self.price = price
+        self.initial_quantity = quantity
         self.quantity = quantity
 
     def __str__(self):
@@ -28,6 +29,14 @@ class Inventory:
         for product in self.products.values():
             print(product)
 
+    # restocking product
+    def restock_product(self, product_name, quantity):
+        if product_name in self.products:
+            self.products[product_name].initial_quantity = self.products[product_name].quantity + quantity
+            self.products[product_name].quantity = self.products[product_name].initial_quantity
+        else:
+            raise ValueError("Product not available or insufficient quantity") 
+
 class SalesReport:
     def __init__(self, inventory):
         self.inventory = inventory
@@ -50,6 +59,27 @@ inventory.add_product(Product("Banana", 0.30, 150))
 
 try:
     revenue = inventory.sell_product("Apple", 20)
+    print(f"Revenue from sale: ${revenue}")
+except ValueError as e:
+    print(e)
+
+inventory.list_products()
+
+report = SalesReport(inventory)
+report.generate_report()
+
+# restocking 50 apples into the inventory
+try:
+    inventory.restock_product("Apple", 50)
+except ValueError as e:
+    print(e)
+
+# listing the products in the inventory
+inventory.list_products()
+
+# selling 30 apples
+try:
+    revenue = inventory.sell_product("Apple", 30)
     print(f"Revenue from sale: ${revenue}")
 except ValueError as e:
     print(e)
