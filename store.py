@@ -106,10 +106,14 @@ inventory.list_products()
 report = SalesReport(inventory)
 report.generate_report()
 
-# applying 10% discount to bananas without losing the original price
+# applying 10% discount to bananas to the original price
 inventory.apply_discount("Banana", 0.1)
 inventory.list_products()
 
-# remove 10% discount from bananas to display the original price
+# applying 30% discount to bananas to the original price without removing the discount
+inventory.apply_discount("Banana", 0.3)
+inventory.list_products()
+
+# remove 30% discount from bananas to display the original price
 inventory.remove_discount("Banana")
 inventory.list_products()
