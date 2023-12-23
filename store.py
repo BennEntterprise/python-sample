@@ -105,6 +105,37 @@ class SalesReport:
                 total_sales += sales
         print(f"Total Sales: ${total_sales}")
 
+
+# Code to Compare Two Inventory Reports
+class InventoryComparer:
+    def __init__(self, inventory1, inventory2):
+        self.inventory1 = inventory1
+        self.inventory2 = inventory2
+
+    def compare_reports(self):
+        # Compare product names in both inventories
+        common_products = set(self.inventory1.products.keys()) & set(self.inventory2.products.keys())
+        unique_products1 = set(self.inventory1.products.keys()) - set(self.inventory2.products.keys())
+        unique_products2 = set(self.inventory2.products.keys()) - set(self.inventory1.products.keys())
+
+        # Compare quantities for common products
+        quantity_differences = {}
+        for product_name in common_products:
+            quantity_diff = self.inventory1.products[product_name].quantity - self.inventory2.products[product_name].quantity
+            if quantity_diff != 0:
+                quantity_differences[product_name] = quantity_diff
+
+        # Generate summary
+        summary = f" \
+            Common Products : {list(common_products)}, \n \
+            Unique Products in Report 1 : {list(unique_products1)}, \n \
+            Unique Products in Report 2: {list(unique_products2)}, \n \
+            Quantity Differences: {quantity_differences}"
+
+        return summary
+
+
+
 # Example Usage
 inventory = Inventory()
 inventory.add_product(Product("Apple", 0.50, 100))
@@ -175,3 +206,19 @@ inventory.save_inventory()
 # read inventory
 print()
 inventory.read_inventory('inventory.csv')
+
+# Comparing two database summaries
+inventory1 = Inventory()
+inventory1.add_product(Product("Apple", 0.50, 100))
+inventory1.add_product(Product("Banana", 0.30, 150))
+
+inventory2 = Inventory()
+inventory2.add_product(Product("Apple", 0.50, 80))  # Simulating a change in quantity
+inventory2.add_product(Product("Orange", 0.40, 120))  # Simulating a new product in the second report
+
+comparer = InventoryComparer(inventory1, inventory2)
+summary = comparer.compare_reports()
+
+print()
+print("Inventory Comparison Summary:")
+print(summary)
