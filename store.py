@@ -1,3 +1,6 @@
+import csv
+
+
 class Product:
     def __init__(self, name, price, quantity):
         self.name = name
@@ -9,6 +12,13 @@ class Product:
 
     def __str__(self):
         return f"{self.name} - ${self.price if not self.discount else self.discount_price} (Quantity: {self.quantity})"
+
+    # returns discount price if discount is applied 
+    def get_price(self):
+        if self.discount:
+            return self.discount_price
+        
+        return self.price
 
 class Inventory:
     def __init__(self):
@@ -54,6 +64,32 @@ class Inventory:
         else:
             raise ValueError("Product not available or insufficient quantity")
 
+    # save inventory to a csv file
+    def save_inventory(self):
+        with open('inventory.csv', 'w', newline='') as csvfile:
+            fieldnames = ['name', 'price', 'quantity']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+            writer.writeheader()    
+
+            for product_name in self.products:
+                writer.writerow({
+                    'name': self.products[product_name].name,
+                    'price': self.products[product_name].get_price(),
+                    'quantity': self.products[product_name].quantity
+                })
+        
+        print("Saved Inventory.")
+
+    # read inventory from a csv file
+    def read_inventory(self, filename):
+        with open(filename, newline='') as csvfile:
+            reader = csv.DictReader(csvfile)
+            print('name', 'price', 'quantity')
+            for row in reader:
+                print(row['name'], row['price'], row['quantity'])
+
+
 class SalesReport:
     def __init__(self, inventory):
         self.inventory = inventory
@@ -86,15 +122,18 @@ report = SalesReport(inventory)
 report.generate_report()
 
 # restocking 50 apples into the inventory
+print()
 try:
     inventory.restock_product("Apple", 50)
 except ValueError as e:
     print(e)
 
 # listing the products in the inventory
+print()
 inventory.list_products()
 
 # selling 30 apples
+print()
 try:
     revenue = inventory.sell_product("Apple", 30)
     print(f"Revenue from sale: ${revenue}")
@@ -107,13 +146,32 @@ report = SalesReport(inventory)
 report.generate_report()
 
 # applying 10% discount to bananas to the original price
+print()
 inventory.apply_discount("Banana", 0.1)
 inventory.list_products()
 
+# save inventory with discount price
+print()
+inventory.save_inventory()
+
+# read inventory
+print()
+inventory.read_inventory('inventory.csv')
+
 # applying 30% discount to bananas to the original price without removing the discount
+print()
 inventory.apply_discount("Banana", 0.3)
 inventory.list_products()
 
 # remove 30% discount from bananas to display the original price
+print()
 inventory.remove_discount("Banana")
 inventory.list_products()
+
+# save inventory with original price
+print()
+inventory.save_inventory()
+
+# read inventory
+print()
+inventory.read_inventory('inventory.csv')
