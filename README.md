@@ -22,13 +22,254 @@ These can be answered right here in the README.md file. You can also create a ne
 
 ### Written questions 
 
-1. How does the Inventory class track and update the quantity of products?
-
-2. In the SalesReport class, how is the total sales figure calculated?
-
-3. What happens if you try to sell more products than are available in the inventory?
+1) How does the Inventory class track and update the quantity of products?
    
-4. How would you modify this system to handle different categories of products?
+The Inventory class tracks and updates the quantity of products through the ‘products’ attribute, which is a dictionary where the keys are product names, and the values are instances of the `Product` class.
+
+Let's break down the relevant methods:
+
+1. Adding Products:
+   
+When a new product is added to the inventory using the ‘add_product’ method, the method checks whether the product with the same name already exists in the ‘products’ dictionary. If it does, the method updates the quantity of the existing product by adding the new quantity. If it doesn't exist, a new entry is added to the ‘products’ dictionary.
+
+    
+    def add_product(self, product):
+        if product.name in self.products:
+            self.products[product.name].quantity += product.quantity
+        else:
+            self.products[product.name] = product
+    
+
+2. Selling Products:
+   When a product is sold using the ‘sell_product’ method, it decreases the quantity of the corresponding product in the ‘products’ dictionary. It checks if the product exists and if the quantity to be sold is available before updating the quantity.
+
+  
+    def sell_product(self, product_name, quantity):
+        if product_name in self.products and self.products[product_name].quantity >= quantity:
+            self.products[product_name].quantity -= quantity
+            return self.products[product_name].price * quantity
+        else:
+            raise ValueError("Product not available or insufficient quantity")
+
+
+2) In the SalesReport class, how is the total sales figure calculated?
+   
+The total sales figure in the ‘SalesReport’ class is calculated by iterating through each product in the inventory and determining the sales for each product. The total sales is then the sum of the sales for all products.
+
+Here's the relevant code from the ‘generate_report’ method:
+
+
+class SalesReport:
+
+
+    def generate_report(self):
+        total_sales = 0
+        print("Sales Report:")
+        for product_name, product in self.inventory.products.items():
+            sold_quantity = product.initial_quantity - product.quantity
+            if sold_quantity > 0:
+                sales = sold_quantity * product.price
+                print(f"{product_name}: Sold {sold_quantity}, Total Sales: ${sales}")
+                total_sales += sales
+        print(f"Total Sales: ${total_sales}")
+
+
+Let's break down the key parts:
+
+1. The method iterates through each product in ‘self.inventory.products.items()’.
+
+2. For each product, it calculates the quantity sold (‘sold_quantity’) by subtracting the current quantity (‘product.quantity’) from the initial quantity (‘product.initial_quantity’). This assumes that the `initial_quantity` represents the original quantity before any sales.
+
+3. If the ‘sold_quantity’ is greater than 0 (meaning some units of the product were sold), it calculates the sales for that product (‘sales’) by multiplying the ‘sold_quantity’ by the product's price (‘product.price’).
+
+4. The details of the sales for each product are printed, including the quantity sold and the total sales for that product.
+
+5. The ‘total_sales’ variable accumulates the sales for all products.
+
+6. Finally, the method prints the total sales across all products.
+
+So, the ‘total_sales’ variable keeps track of the cumulative sales amount for all products in the inventory, and it is printed at the end of the report.
+
+
+3) What happens if you try to sell more products than are available in the inventory?
+   
+ If you try to sell more products than are available in the inventory, the ‘sell_product’ method in the ‘Inventory’ class will raise a ‘ValueError’ with the message "Product not available or insufficient quantity." This is because the method checks whether the specified product exists in the inventory and whether the quantity to be sold is greater than the available quantity.
+
+Here's the relevant code from the ‘sell_product’ method:
+
+
+class Inventory:
+
+
+    def sell_product(self, product_name, quantity):
+        if product_name in self.products and self.products[product_name].quantity >= quantity:
+            self.products[product_name].quantity -= quantity
+            return self.products[product_name].price * quantity
+        else:
+            raise ValueError("Product not available or insufficient quantity")
+
+If the condition ‘product_name in self.products and self.products [product_name].quantity >= quantity’ evaluates to ‘False’, indicating that the product is not available or the quantity is insufficient, the method raises a ‘ValueError’.
+
+For example, let's say you have an inventory with 100 units of "Apple," and you try to sell 120 units of "Apple." This would result in a ‘ValueError’  being raised with the specified message, indicating that the sale cannot be processed due to insufficient quantity.
+
+   
+4) How would you modify this system to handle different categories of products?
+   
+   1. Product Class Modification:
+    The Product class is modified to include a new attribute called category.
+  This modification allows each product to be associated with a specific   category.   
+   class Product:
+       def __init__(self, name, price, quantity, category):
+           self.name = name
+           self.price = price
+           self.quantity = quantity
+           self.category = category  # New attribute for product category
+
+       def __str__(self):
+           return f"{self.name} ({self.category}) - ${self.price} (Quantity: {self.quantity})"
+   
+
+2. Inventory Class Modification:
+   The Inventory class is modified to use a tuple (product_name, category) as a key in the products dictionary.
+   When adding a product or selling a product, the combination of product name and category is used as a unique identifier.
+
+  
+   class Inventory:
+       def __init__(self):
+           self.products = {}
+
+       def add_product(self, product):
+           key = (product.name, product.category)  # Use a tuple as a key for both name and category
+           if key in self.products:
+               self.products[key].quantity += product.quantity
+           else:
+               self.products[key] = product
+
+       def sell_product(self, product_name, category, quantity):
+           key = (product_name, category)
+           if key in self.products and self.products[key].quantity >= quantity:
+               self.products[key].quantity -= quantity
+               return self.products[key].price * quantity
+           else:
+               raise ValueError("Product not available or insufficient quantity")
+   
+
+3. SalesReport Class Modification:
+ The SalesReport class is modified to reflect the changes in product representation when generating the sales report.
+  The loop now iterates over a tuple (product_name, category) and retrieves the corresponding product.
+
+   
+   class SalesReport:
+       def __init__(self, inventory):
+           self.inventory = inventory
+
+       def generate_report(self):
+           total_sales = 0
+           print("Sales Report:")
+           for (product_name, category), product in self.inventory.products.items():
+               sold_quantity = product.initial_quantity - product.quantity
+               if sold_quantity > 0:
+                   sales = sold_quantity * product.price
+                   print(f"{product_name} ({category}): Sold {sold_quantity}, Total Sales: ${sales}")
+                   total_sales += sales
+           print(f"Total Sales: ${total_sales}")
+   
+
+
+4. Example Usage:
+   The example usage at the end demonstrates adding products with different categories and selling products based on both name and category.
+
+   
+   inventory = Inventory()
+   inventory.add_product(Product("Apple", 0.50, 100, "Fruit"))
+   inventory.add_product(Product("Banana", 0.30, 150, "Fruit"))
+   inventory.add_product(Product("Laptop", 800, 10, "Electronics"))
+
+   try:
+       revenue = inventory.sell_product("Apple", "Fruit", 20)
+       print(f"Revenue from sale: ${revenue}")
+   except ValueError as e:
+       print(e)
+
+   inventory.list_products()
+
+   report = SalesReport(inventory)
+   report.generate_report()
+   
+
+These modifications make the system more flexible by allowing products to be categorized, providing a better way to organize and handle different types of products.
+
+full Code: 
+
+class Product:
+    def _init_(self, name, price, quantity, category):
+        self.name = name
+        self.price = price
+        self.quantity = quantity
+        self.initial_quantity = quantity
+        self.category = category  # New attribute for product category
+
+    def _str_(self):
+        return f"{self.name} ({self.category}) - ${self.price} (Quantity: {self.quantity})"
+
+
+class Inventory:
+    def _init_(self):
+        self.products = {}
+
+    def add_product(self, product):
+        key = (product.name, product.category)  # Use a tuple as a key for both name and category
+        if key in self.products:
+            self.products[key].quantity += product.quantity
+        else:
+            self.products[key] = product
+
+    def sell_product(self, product_name, category, quantity):
+        key = (product_name, category)
+        if key in self.products and self.products[key].quantity >= quantity:
+            self.products[key].quantity -= quantity
+            return self.products[key].price * quantity
+        else:
+            raise ValueError("Product not available or insufficient quantity")
+
+    def list_products(self):
+        for product in self.products.values():
+            print(product)
+
+
+class SalesReport:
+    def _init_(self, inventory):
+        self.inventory = inventory
+
+    def generate_report(self):
+        total_sales = 0
+        print("Sales Report:")
+        for (product_name, category), product in self.inventory.products.items():
+            sold_quantity = product.initial_quantity - product.quantity
+            if sold_quantity > 0:
+                sales = sold_quantity * product.price
+                print(f"{product_name} ({category}): Sold {sold_quantity}, Total Sales: ${sales}")
+                total_sales += sales
+        print(f"Total Sales: ${total_sales}")
+
+
+# Example Usage
+inventory = Inventory()
+inventory.add_product(Product("Apple", 0.50, 100, "Fruit"))
+inventory.add_product(Product("Banana", 0.30, 150, "Fruit"))
+inventory.add_product(Product("Laptop", 800, 10, "Electronics"))
+
+try:
+    revenue = inventory.sell_product("Apple", "Fruit", 20)
+    print(f"Revenue from sale: ${revenue}")
+except ValueError as e:
+    print(e)
+
+inventory.list_products()
+
+report = SalesReport(inventory)
+report.generate_report()
+
    
 
 ### To be Submitted as a Pull Request
