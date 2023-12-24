@@ -202,7 +202,6 @@ iv. Example Usage:
 
 These modifications make the system more flexible by allowing products to be categorized, providing a better way to organize and handle different types of products.
 
-<br>
 full Code: 
 
 class Product:
