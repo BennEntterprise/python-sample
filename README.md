@@ -28,7 +28,7 @@ The Inventory class tracks and updates the quantity of products through the ‘p
 
 Let's break down the relevant methods:
 
-1. Adding Products:
+i. Adding Products:
    
 When a new product is added to the inventory using the ‘add_product’ method, the method checks whether the product with the same name already exists in the ‘products’ dictionary. If it does, the method updates the quantity of the existing product by adding the new quantity. If it doesn't exist, a new entry is added to the ‘products’ dictionary.
 
@@ -40,7 +40,7 @@ When a new product is added to the inventory using the ‘add_product’ method,
             self.products[product.name] = product
     
 
-2. Selling Products:
+ii. Selling Products:
    When a product is sold using the ‘sell_product’ method, it decreases the quantity of the corresponding product in the ‘products’ dictionary. It checks if the product exists and if the quantity to be sold is available before updating the quantity.
 
   
@@ -51,6 +51,7 @@ When a new product is added to the inventory using the ‘add_product’ method,
         else:
             raise ValueError("Product not available or insufficient quantity")
 
+<br>
 
 2) In the SalesReport class, how is the total sales figure calculated?
    
@@ -76,20 +77,21 @@ class SalesReport:
 
 Let's break down the key parts:
 
-1. The method iterates through each product in ‘self.inventory.products.items()’.
+i. The method iterates through each product in ‘self.inventory.products.items()’.
 
-2. For each product, it calculates the quantity sold (‘sold_quantity’) by subtracting the current quantity (‘product.quantity’) from the initial quantity (‘product.initial_quantity’). This assumes that the `initial_quantity` represents the original quantity before any sales.
+ii. For each product, it calculates the quantity sold (‘sold_quantity’) by subtracting the current quantity (‘product.quantity’) from the initial quantity (‘product.initial_quantity’). This assumes that the `initial_quantity` represents the original quantity before any sales.
 
-3. If the ‘sold_quantity’ is greater than 0 (meaning some units of the product were sold), it calculates the sales for that product (‘sales’) by multiplying the ‘sold_quantity’ by the product's price (‘product.price’).
+iii. If the ‘sold_quantity’ is greater than 0 (meaning some units of the product were sold), it calculates the sales for that product (‘sales’) by multiplying the ‘sold_quantity’ by the product's price (‘product.price’).
 
-4. The details of the sales for each product are printed, including the quantity sold and the total sales for that product.
+iv. The details of the sales for each product are printed, including the quantity sold and the total sales for that product.
 
-5. The ‘total_sales’ variable accumulates the sales for all products.
+v. The ‘total_sales’ variable accumulates the sales for all products.
 
-6. Finally, the method prints the total sales across all products.
+vi. Finally, the method prints the total sales across all products.
 
 So, the ‘total_sales’ variable keeps track of the cumulative sales amount for all products in the inventory, and it is printed at the end of the report.
 
+<br>
 
 3) What happens if you try to sell more products than are available in the inventory?
    
@@ -112,10 +114,11 @@ If the condition ‘product_name in self.products and self.products [product_nam
 
 For example, let's say you have an inventory with 100 units of "Apple," and you try to sell 120 units of "Apple." This would result in a ‘ValueError’  being raised with the specified message, indicating that the sale cannot be processed due to insufficient quantity.
 
+<br>
    
 4) How would you modify this system to handle different categories of products?
    
-   1. Product Class Modification:
+   i. Product Class Modification:
     The Product class is modified to include a new attribute called category.
   This modification allows each product to be associated with a specific   category.   
    class Product:
@@ -129,7 +132,7 @@ For example, let's say you have an inventory with 100 units of "Apple," and you 
            return f"{self.name} ({self.category}) - ${self.price} (Quantity: {self.quantity})"
    
 
-2. Inventory Class Modification:
+ii. Inventory Class Modification:
    The Inventory class is modified to use a tuple (product_name, category) as a key in the products dictionary.
    When adding a product or selling a product, the combination of product name and category is used as a unique identifier.
 
@@ -154,7 +157,7 @@ For example, let's say you have an inventory with 100 units of "Apple," and you 
                raise ValueError("Product not available or insufficient quantity")
    
 
-3. SalesReport Class Modification:
+iii. SalesReport Class Modification:
  The SalesReport class is modified to reflect the changes in product representation when generating the sales report.
   The loop now iterates over a tuple (product_name, category) and retrieves the corresponding product.
 
@@ -176,7 +179,7 @@ For example, let's say you have an inventory with 100 units of "Apple," and you 
    
 
 
-4. Example Usage:
+iv. Example Usage:
    The example usage at the end demonstrates adding products with different categories and selling products based on both name and category.
 
    
@@ -199,6 +202,7 @@ For example, let's say you have an inventory with 100 units of "Apple," and you 
 
 These modifications make the system more flexible by allowing products to be categorized, providing a better way to organize and handle different types of products.
 
+<br>
 full Code: 
 
 class Product:
